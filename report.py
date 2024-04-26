@@ -1,4 +1,5 @@
 import openpyxl
+from donor import *
 
 # DONOR_ID = "Donor ID"
 # SPOUSE_FIRST = "Household: Spouse First Name"
@@ -13,14 +14,16 @@ import openpyxl
 # AMOUNT = "Amount"
 # ATTRIBUTE = "Connection"
 
-class revenueReport:
+class RevenueReport:
     def __init__(self, workbook, sheet1, sheet2):
         self.workbook = workbook
         self.sheet1 = sheet1
         self.sheet2 = sheet2
         self.HEADER_ROW = self.getHeaderRowIndex()-1
         self.MAX_COL = self.sheet1.max_column
+        self.MAX_ROW = self.sheet1.max_row
         self.colIndex = 1
+        self.rowIndex = self.getHeaderRowIndex()+1
         self.headerDict = {
             "DONOR_ID" : "Donor ID",
             "SPOUSE_FIRST" : "Household: Spouse First Name",
@@ -51,6 +54,9 @@ class revenueReport:
 
     def incColIndex(self):
         self.colIndex += 1
+
+    def incRowIndex(self):
+        self.rowIndex += 1
 
     def getWorkbook(self):
         return self.workbook
@@ -95,36 +101,42 @@ class revenueReport:
         if headerName == "AMOUNT":
             cell.number_format = "$#,##0.00"
 
-    def checkCustomCol(self):
-        return
-
-    def transferFirstName(self):
-        return
-
-    def transferLastName(self):
-        return
-    
-    def transferCompany(self):
-        return
-    
     def transferAllCols(self):
         for header in self.headerOrder:
             currentCol = self.getColValues(self.headerDict[header])
             self.transferCol(currentCol, header)
         return
+    
+    def getRowValues(self):
+        while self.rowIndex < self.MAX_ROW:
+            row = self.sheet1[self.rowIndex]
+            print(row[0].value)
+            self.incRowIndex()
+
+
+        return
+
+    def transferRow(self):
+        return
+    
+    def transferRowHeaders(self):
+
+
+        
+        return
+    
         
 wb = openpyxl.load_workbook('newrev.xlsx')
 ws1 = wb['Sheet1']
 ws2 = wb.create_sheet("Sheet2")
 
-newReport = revenueReport(wb, ws1, ws2)
+newReport = RevenueReport(wb, ws1, ws2)
 
-# newReport.transferCol(newReport.getColValues(newReport.headerDict["DONOR_ID"]))
+# newDonor = Donor([])
 
-newReport.transferAllCols()
+newReport.getRowValues()
 
-# for x in range(1, 20):
-#     print(newReport.sheet2.cell(row=x, column=1).value)
+
 
 newbook = newReport.getWorkbook()
 newbook.save("superReport.xlsx")
