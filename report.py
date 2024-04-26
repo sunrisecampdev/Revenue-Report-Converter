@@ -1,18 +1,6 @@
 import openpyxl
+from pprint import pprint
 from donor import *
-
-# DONOR_ID = "Donor ID"
-# SPOUSE_FIRST = "Household: Spouse First Name"
-# SPOUSE_LAST = "Household: Spouse Last Name"
-# PRIMARY_FIRST = "Household: Primary First Name"
-# PRIMARY_LAST = "Household: Primary Last Name"
-# COMPANY = "Company Name"
-# EVENT_STATUS = "Event Status"
-# ATTENDEES = "Attendees"
-# DATE = "Date"
-# SALE_TYPE = "Type"
-# AMOUNT = "Amount"
-# ATTRIBUTE = "Connection"
 
 class RevenueReport:
     def __init__(self, workbook, sheet1, sheet2):
@@ -24,34 +12,37 @@ class RevenueReport:
         self.MAX_ROW = self.sheet1.max_row
         self.colIndex = 1
         self.rowIndex = self.getHeaderRowIndex()+1
-        self.headerDict = {
-            "DONOR_ID" : "Donor ID",
-            "SPOUSE_FIRST" : "Household: Spouse First Name",
-            "SPOUSE_LAST" : "Household: Spouse Last Name",
-            "PRIMARY_FIRST" : "Household: Primary First Name",
-            "PRIMARY_LAST" : "Household: Primary Last Name",
-            "COMPANY" : "Company Name",
-            "EVENT_STATUS" : "Event Status",
-            "ATTENDEES" : "Attendees",
-            "DATE" : "Date",
-            "SALE_TYPE" : "Type",
-            "AMOUNT" : "Amount",
-            "CONNECTION" : "Attribute"
-        }
+        self.headerDict = dict({
+            "DONOR_ID" : {"name" : "Donor ID"},
+            "SPOUSE_FIRST" : {"name" : "Household: Spouse First Name"},
+            "SPOUSE_LAST" : {"name" : "Household: Spouse Last Name"},
+            "PRIMARY_FIRST" : {"name": "Household: Primary First Name"},
+            "PRIMARY_LAST" : {"name" : "Household: Primary Last Name"},
+            "COMPANY" : {"name" : "Company Name"},
+            "EVENT_STATUS" : {"name": "Event Status"},
+            "ATTENDEES" : {"name": "Attendees"},
+            "DATE" : {"name": "Date"},
+            "SALE_TYPE" : {"name" : "Type"},
+            "AMOUNT" : {"name" : "Amount"},
+            "CONNECTION" : {"name" : "Attribute"},
+            "FIRST_NAME" : {"name" : "First Name"},
+            "LAST_NAME" : {"name" : "Last Name"},
+            "PAID": {"name" : "Paid"},
+        })
         self.headerOrder = ["DONOR_ID",
-                            "SPOUSE_FIRST",
-                            "SPOUSE_LAST",
-                            "PRIMARY_FIRST",
-                            "PRIMARY_LAST",
+                            "FIRST_NAME",
+                            "LAST_NAME",
                             "COMPANY",
                             "EVENT_STATUS",
                             "ATTENDEES",
                             "DATE",
                             "SALE_TYPE",
                             "AMOUNT",
+                            "PAID",
                             "CONNECTION"
                             ]
-
+        self.headerIndexMap = dict()
+        
     def incColIndex(self):
         self.colIndex += 1
 
@@ -60,6 +51,17 @@ class RevenueReport:
 
     def getWorkbook(self):
         return self.workbook
+    
+    def mapColIndices(self):
+        headerIndex = self.getHeaderRowIndex()
+        for currentIndex in range(1, self.MAX_COL):
+            if (ws1.cell(row=headerIndex, column=currentIndex).value is None):
+                continue
+            self.headerIndexMap[ws1.cell(row=headerIndex, column=currentIndex).value] = currentIndex
+            currentIndex += 1
+        pprint(self.headerIndexMap)
+        pprint(ws1.cell(row=headerIndex, column=self.MAX_COL).value)
+        return
         
     def getHeaderRowIndex(self):
         """Returns the row index of the header row"""
@@ -102,29 +104,38 @@ class RevenueReport:
             cell.number_format = "$#,##0.00"
 
     def transferAllCols(self):
+        """Copies to Sheet2 each column respective to the headers from headerOrder"""
         for header in self.headerOrder:
-            currentCol = self.getColValues(self.headerDict[header])
+            currentCol = self.getColValues(self.headerDict[header]["name"])
             self.transferCol(currentCol, header)
         return
     
-    def getRowValues(self):
+    def getDonorFromValues(self):
+        """Creates a donor object based on the given row values"""
         while self.rowIndex < self.MAX_ROW:
             row = self.sheet1[self.rowIndex]
             print(row[0].value)
             self.incRowIndex()
-
-
         return
 
-    def transferRow(self):
+    def transferRowData(self):
+        """Iterates through each line item after the header in Sheet1 and transfers them to Sheet2"""
+        for row in self.sheet1.iter_rows(min_row=self.HEADER_ROW+1, max_row=self.MAX_ROW):
+            for cell in row:
+                if cell.value is None:
+                    continue
+                pprint(cell.value)
+
+            print(" ")
         return
     
     def transferRowHeaders(self):
-
-
-        
+        """Copies to Sheet2 each header respective to the headers from headerOrder"""
+        colindex, rowindex = 1, 1
+        for header in self.headerOrder:
+            ws2.cell(row=rowindex, column=colindex, value=self.headerDict[header]["name"])
+            colindex += 1
         return
-    
         
 wb = openpyxl.load_workbook('newrev.xlsx')
 ws1 = wb['Sheet1']
@@ -132,14 +143,24 @@ ws2 = wb.create_sheet("Sheet2")
 
 newReport = RevenueReport(wb, ws1, ws2)
 
-# newDonor = Donor([])
+newReport.transferRowHeaders()
 
-newReport.getRowValues()
+newReport.transferRowData()
 
 
 
-newbook = newReport.getWorkbook()
-newbook.save("superReport.xlsx")
+
+# test for getting the row headers
+
+# for x in range(1, len(newReport.headerOrder)+1):
+#     print(ws2.cell(row=1,column=x).value)
+
+
+
+# save all work as a new file
+
+# newbook = newReport.getWorkbook()
+# newbook.save("superReport.xlsx")
 
 
 
