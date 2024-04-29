@@ -72,8 +72,8 @@ class Donor:
             self.properties["LAST_NAME"] = namePair["last"]
 
 
-        for key, value in list(self.properties.items()):
-            print(key, value)
+        # for key, value in list(self.properties.items()):
+        #     print(key, value)
 
         return
     
