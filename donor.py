@@ -57,21 +57,69 @@ class Donor:
 
         return {"first" : firstName, "last" : lastName}
     
-    def getCompany(self):
+    def getCompany(self, rowCells):
         """Additional processing for sub donors to get the company name if there is none"""
+        donorIDIndex = self.indexMap[self.headerDict["DONOR_ID"]["name"]]
+        donorIDValue = rowCells[donorIDIndex]
+
+        # Check if this is sub-donor based on donor ID
+        if (":" not in donorIDValue):
+            return
+
+        # Extract raw data from column cell
+        subdonorIndex = self.indexMap[self.headerDict["DONOR"]["name"]]
+        subdonorValue = rowCells[subdonorIndex]
+
+        # Split based on colon delimiter
+        subdonorList = subdonorValue.split(":")
+
+        # Get list for company and list for sub donor full name
+        companyRaw = subdonorList[0]
+        subdonorFullName = subdonorList[-1]
+
+        # Extract company name from company string list
+        companyList = companyRaw.split(" ")[1:]
+        companyActual = " ".join(companyList)
+
+        # Extract full name from sub donor name string list and remove the first donorID element
+        subdonorProcessedName = subdonorFullName.split(" ")
+        subdonorProcessedName.pop(0)
+
+        # Extract first and last names from raw full name string slice
+        # subdonorFirstName = subdonorFullName.split(" ")[1:][0]
+        # subdonorLastName = subdonorFullName.split(" ")[2:][0]
+
+        subdonorLastName = "".join(subdonorProcessedName[-1])
+        subdonorFirstName = " ".join(subdonorProcessedName[0:-1])
+
+        self.properties["COMPANY"] = companyActual
+
+        self.properties["FIRST_NAME"] = subdonorFirstName
+
+        self.properties["LAST_NAME"] = subdonorLastName
+
+        # print(self.properties["FIRST_NAME"])
+        # print(self.properties["LAST_NAME"])
+        # print(self.properties["COMPANY"])
+
         return
 
-    def convertRowCellsList(self, rowCells, rowindex):
+    def convertRowCellsList(self, rowCells, indexMap):
+        """Instantiates the respective Donor properties based on the list of row cell values"""
+        # Fills in property values based on raw cell data
         for header in self.headerOrder:
             self.properties[header] = self.getValueFromKey(header, rowCells)
 
+        # Processes spouse and primary names and adjusts first/last names accordingly
         namePair = self.getNames(rowCells)
-
         if namePair:
             self.properties["FIRST_NAME"] = namePair["first"]
             self.properties["LAST_NAME"] = namePair["last"]
 
+        # Processes data for sub-donors using the raw data from Household column
+        self.getCompany(rowCells)
 
+        # test to check donor properties
         # for key, value in list(self.properties.items()):
         #     print(key, value)
 

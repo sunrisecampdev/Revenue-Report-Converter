@@ -27,6 +27,7 @@ class RevenueReport:
             "CONNECTION" : {"name" : "Attribute"},
             "FIRST_NAME" : {"name" : "First Name"},
             "LAST_NAME" : {"name" : "Last Name"},
+            "DONOR" : {"name" : "Donor"},
             "PAID": {"name" : "Paid"},
         })
         self.headerOrder = ["DONOR_ID",
@@ -182,8 +183,6 @@ newReport.transferSheet1Rows()
 
 # for x in range(1, len(newReport.headerOrder)+1):
 #     print(ws2.cell(row=1,column=x).value)
-
-
 
 # save all work as a new file
 # should figure out how to overwrite previous file
