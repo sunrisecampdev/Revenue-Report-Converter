@@ -8,7 +8,7 @@ class RevenueReport:
         self.sheet1 = sheet1
         self.sheet2 = sheet2
         self.HEADER_ROW = self.getHeaderRowIndex()-1
-        self.MAX_COL = self.sheet1.max_column
+        self.MAX_COL = self.sheet1.max_column+1
         self.MAX_ROW = self.sheet1.max_row
         self.colIndex = 1
         self.rowIndex = self.getHeaderRowIndex()+1
@@ -53,14 +53,12 @@ class RevenueReport:
         return self.workbook
     
     def mapColIndices(self):
+        """Maps each header column to their respective list index"""
         headerIndex = self.getHeaderRowIndex()
-        for currentIndex in range(1, self.MAX_COL):
+        for currentIndex in range(1, self.MAX_COL+1):
             if (ws1.cell(row=headerIndex, column=currentIndex).value is None):
                 continue
-            self.headerIndexMap[ws1.cell(row=headerIndex, column=currentIndex).value] = currentIndex
-            currentIndex += 1
-        pprint(self.headerIndexMap)
-        pprint(ws1.cell(row=headerIndex, column=self.MAX_COL).value)
+            self.headerIndexMap[ws1.cell(row=headerIndex, column=currentIndex).value] = currentIndex - 2
         return
         
     def getHeaderRowIndex(self):
@@ -72,6 +70,7 @@ class RevenueReport:
                 return counter
         
     def getColIndex(self, colName, headerRow, MAX_COL):
+        """Returns the index of the column based on the given header column name"""
         for headerColIndex in range(1, MAX_COL):
             if self.sheet1.cell(row=headerRow, column=headerColIndex).value == colName:
                 return headerColIndex
@@ -88,6 +87,7 @@ class RevenueReport:
         return valueList
 
     def transferCol(self, colList, headerName):
+        """Takes a header name and transfers that respective column over to Sheet2"""
         rowIndex = 1
         for colCellValue in colList:
             currentCell = self.sheet2.cell(row=rowIndex, column=self.colIndex)
@@ -98,6 +98,7 @@ class RevenueReport:
         return
     
     def cellFormat(self, cell, headerName):
+        """Formats the cell based on the headerName provided"""
         if headerName == "DATE":
             cell.number_format = "mm/dd/yyyy"
         if headerName == "AMOUNT":
@@ -114,19 +115,26 @@ class RevenueReport:
         """Creates a donor object based on the given row values"""
         while self.rowIndex < self.MAX_ROW:
             row = self.sheet1[self.rowIndex]
-            print(row[0].value)
+            # print(row[0].value)
             self.incRowIndex()
         return
 
     def transferRowData(self):
-        """Iterates through each line item after the header in Sheet1 and transfers them to Sheet2"""
-        for row in self.sheet1.iter_rows(min_row=self.HEADER_ROW+1, max_row=self.MAX_ROW):
-            for cell in row:
-                if cell.value is None:
-                    continue
-                pprint(cell.value)
+        """Iterates through each row line item after the header in Sheet1 creates a Donor object"""
+        # use row[colindex].value to get the value
 
-            print(" ")
+        for row in self.sheet1.iter_rows(min_row=self.HEADER_ROW+2, max_row=self.MAX_ROW):
+            # If there is a blank in the first column, then skip
+            if not row[1].value:
+                continue
+            cellValues = []
+            for colindex in range(1, self.MAX_COL):
+                cellValues.append(row[colindex].value)
+
+            newDonor = Donor(cellValues, self.headerIndexMap, self.headerDict, self.headerOrder)
+
+            # if cellValues is not None:
+            #     pprint(cellValues)
         return
     
     def transferRowHeaders(self):
@@ -142,13 +150,13 @@ ws1 = wb['Sheet1']
 ws2 = wb.create_sheet("Sheet2")
 
 newReport = RevenueReport(wb, ws1, ws2)
+newReport.mapColIndices()
 
-newReport.transferRowHeaders()
+print(newReport.headerIndexMap)
+
+# newReport.transferRowHeaders()
 
 newReport.transferRowData()
-
-
-
 
 # test for getting the row headers
 
