@@ -187,24 +187,5 @@ newReport.transferSheet1Rows()
 # save all work as a new file
 # should figure out how to overwrite previous file
 
-newbook = newReport.getWorkbook()
-newbook.save("superRevenue.xlsx")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+fixedBook = newReport.getWorkbook()
+fixedBook.save("superRevenue.xlsx")
