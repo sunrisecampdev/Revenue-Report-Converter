@@ -1,3 +1,6 @@
 .DS_Store
 venv
 *.xlsx
+build
+dist
+fixreport.spec
