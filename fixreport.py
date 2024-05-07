@@ -1,4 +1,5 @@
 import openpyxl
+from os import path
 from pprint import pprint
 from donor import *
 
@@ -164,7 +165,9 @@ class RevenueReport:
             ws2.cell(row=rowindex, column=colindex, value=self.headerDict[header]["name"])
             colindex += 1
         return
-        
+
+
+path_to_xlsx = path.abspath(path.join(path.dirname(__file__), 'newrev.xlsx'))
 wb = openpyxl.load_workbook('newrev.xlsx')
 ws1 = wb['Sheet1']
 ws2 = wb.create_sheet("Sheet2")
