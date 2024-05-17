@@ -3,4 +3,4 @@ venv
 *.xlsx
 build
 dist
-fixreport.spec
+fixrev.spec

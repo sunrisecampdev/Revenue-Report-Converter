@@ -166,29 +166,30 @@ class RevenueReport:
             colindex += 1
         return
 
+if __name__ == "__main__":
 
-path_to_xlsx = path.abspath(path.join(path.dirname(__file__), 'newrev.xlsx'))
-wb = openpyxl.load_workbook('newrev.xlsx')
-ws1 = wb['Sheet1']
-ws2 = wb.create_sheet("Formatted")
+    path_to_xlsx = path.abspath(path.join(path.dirname(__file__), 'newrev.xlsx'))
+    wb = openpyxl.load_workbook('newrev.xlsx')
+    ws1 = wb['Sheet1']
+    ws2 = wb.create_sheet("Formatted")
 
-newReport = RevenueReport(wb, ws1, ws2)
-newReport.mapColIndices()
+    newReport = RevenueReport(wb, ws1, ws2)
+    newReport.mapColIndices()
 
-# print(newReport.headerIndexMap)
+    # print(newReport.headerIndexMap)
 
-# newReport.transferRowHeaders()
+    # newReport.transferRowHeaders()
 
-newReport.transferRowHeaders()
-newReport.transfersheetRawRows()
+    newReport.transferRowHeaders()
+    newReport.transfersheetRawRows()
 
-# test for getting the row headers
+    # test for getting the row headers
 
-# for x in range(1, len(newReport.headerOrder)+1):
-#     print(ws2.cell(row=1,column=x).value)
+    # for x in range(1, len(newReport.headerOrder)+1):
+    #     print(ws2.cell(row=1,column=x).value)
 
-# save all work as a new file
-# should figure out how to overwrite previous file
+    # save all work as a new file
+    # should figure out how to overwrite previous file
 
-fixedBook = newReport.getWorkbook()
-fixedBook.save("superRevenue.xlsx")
+    fixedBook = newReport.getWorkbook()
+    fixedBook.save("superRevenue.xlsx")
