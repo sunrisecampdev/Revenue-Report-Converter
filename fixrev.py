@@ -1,5 +1,6 @@
 import openpyxl
 from os import path
+import sys
 from pprint import pprint
 from donor import *
 
@@ -168,12 +169,21 @@ class RevenueReport:
 
 if __name__ == "__main__":
 
-    path_to_xlsx = path.abspath(path.join(path.dirname(__file__), 'newrev.xlsx'))
-    wb = openpyxl.load_workbook('newrev.xlsx')
+    # path_to_xlsx = path.abspath(path.join(path.dirname(__file__), 'newrev.xlsx'))
+
+    bundle_dir = path.abspath(path.dirname(__file__)) 
+    path_to_xlsx = path.join(bundle_dir, 'newrev.xlsx')
+
+    path_to_save = path.join(bundle_dir, 'superRev.xlsx')
+
+    # bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))
+    # path_to_xlsx = path.abspath(path.join(bundle_dir, 'newrev.xlsx'))
+
+    wb = openpyxl.load_workbook(path_to_xlsx)
     ws1 = wb['Sheet1']
     ws2 = wb.create_sheet("Formatted")
 
-    newReport = RevenueReport(wb, ws1, ws2)
+    newReport = RevenueReport(wb, ws1, ws2) 
     newReport.mapColIndices()
 
     # print(newReport.headerIndexMap)
@@ -192,4 +202,4 @@ if __name__ == "__main__":
     # should figure out how to overwrite previous file
 
     fixedBook = newReport.getWorkbook()
-    fixedBook.save("superRevenue.xlsx")
+    fixedBook.save(path_to_save)

@@ -5,7 +5,7 @@ a = Analysis(
     ['fixrev.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('newrev.xlsx', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
