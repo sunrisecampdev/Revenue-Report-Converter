@@ -6,6 +6,8 @@ Python 3.12.3+
 Openpyxl 3.1.2
 
 # How to Use:
+Outdated - Will update eventually
+
 1. Download the revenue report from NetSuite
 2. Open Excel on desktop and create a new spreadsheet
 3. Copy everything from the DEVRevenue report from NetSuite
