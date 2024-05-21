@@ -75,6 +75,7 @@ class RevenueReport:
             counter += 1
             if colCell.value == "Item":
                 return counter
+        raise IndexError("The Header Row Index was not found! Make sure that newrev.xslx is properly formatted.")
         
     def getColIndex(self, colName, headerRow, MAX_COL):
         """Returns the index of the column based on the given header column name"""
@@ -169,15 +170,9 @@ class RevenueReport:
 
 if __name__ == "__main__":
 
-    # path_to_xlsx = path.abspath(path.join(path.dirname(__file__), 'newrev.xlsx'))
-
     bundle_dir = path.abspath(path.dirname(__file__)) 
     path_to_xlsx = path.join(bundle_dir, 'newrev.xlsx')
-
     path_to_save = path.join(bundle_dir, 'superRev.xlsx')
-
-    # bundle_dir = getattr(sys, '_MEIPASS', path.abspath(path.dirname(__file__)))
-    # path_to_xlsx = path.abspath(path.join(bundle_dir, 'newrev.xlsx'))
 
     wb = openpyxl.load_workbook(path_to_xlsx)
     ws1 = wb['Sheet1']
