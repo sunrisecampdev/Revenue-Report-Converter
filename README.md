@@ -1,5 +1,5 @@
 # NetSuite Revenue Report Converter
-Basic python script to convert the shitty NetSuite reports to something we can actually use.
+Basic python script to convert the dreadful NetSuite reports to something we can actually use.
 
 # Requirements
 Python 3.12.3+
