@@ -1,4 +1,5 @@
 from pprint import pprint
+import sys
 
 class Donor:
     def __init__(self, rowCells, indexMap, headerDict, headerOrder):
@@ -60,7 +61,7 @@ class Donor:
     def getCompany(self, rowCells):
         """Additional processing for sub donors to get the company name if there is none"""
         donorIDIndex = self.indexMap[self.headerDict["DONOR_ID"]["name"]]
-        donorIDValue = rowCells[donorIDIndex]
+        donorIDValue = str(rowCells[donorIDIndex])
 
         # Check if this is sub-donor based on donor ID
         if (":" not in donorIDValue):
